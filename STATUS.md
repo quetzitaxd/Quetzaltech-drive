@@ -13,12 +13,12 @@ Scaffold de desarrollo, no aplicación final. Incluye servidor health, inicializ
 | 05 interfaz | Completada el 2026-09-22 |
 | 06 integración web | Completada con limitación de video real el 2026-09-22 |
 | 07 Android | En progreso; falta aceptación en dispositivo y firma release |
-| 08 despliegue | App desplegada y saludable; HTTPS/Proxy Host pendiente |
+| 08 despliegue | Completada el 2026-09-22; HTTPS validado |
 
 ## Evidencia al empaquetar
 Ver docs/VERIFICATION.md.
 
-## Etapa 08 — app desplegada; publicación HTTPS habilitada
+## Etapa 08 — despliegue completado
 - `scripts/backup-vps.sh` detiene/reinicia solo `app` del Compose de este proyecto, respalda `data/`, `.env` y Compose en `/srv/backups/quetzaltech-drive`, con checksum y permisos restrictivos; no borra copias ni datos.
 - `scripts/restore-vps.sh` acepta solo backups de esa carpeta, valida miembros/enlaces, restaura únicamente en `/srv/quetzaltech-drive-restore.*` y prueba la copia con la imagen del proyecto sin red. `scripts/verify-restore.mjs` verifica SQLite/FKs, rutas, tamaños y SHA-256 de originales, arranca app por loopback y confirma rutas privadas cerradas.
 - `scripts/restore.test.mjs` crea una base/archivo fixture, copia a ubicación aislada, prueba arranque HTTP y comprueba que bytes alterados fallen por hash. `Dockerfile` incluye el verificador; `README.md` y `docs/OPERATIONS.md` describen instalación, contraseña, pairing, actualización, rollback y keystore.
@@ -26,16 +26,12 @@ Ver docs/VERIFICATION.md.
 - VPS preflight: Debian, Docker 29.5.2/Compose 5.1.4, red externa `proxy`, 59 GB libres, 11 GiB RAM con 2.2 GiB disponibles. La ruta y el nombre de contenedor estaban libres. SSH funciona con usuario `debian` (minúsculas); ninguna clave se modificó o borró.
 - Desplegado en `/srv/quetzaltech-drive`; `.env` producción modo 600, sin contraseña ni secretos, con URL pública prevista y origen Android. Imagen `quetzaltech-drive-app`, servicio `quetzaltech-drive`: health healthy; `/api/health` 200, `/api/products` 401, `/data` 404; Docker confirma `80/tcp` sin puertos host. Force-recreate mantuvo el volumen y el servicio saludable.
 - Backup real creado en `/srv/backups/quetzaltech-drive` con SHA-256. Restore real validado sin red en `/srv/quetzaltech-drive-restore.CA1iGu`; SQLite íntegro, 0 assets (sin datos previos) y API arrancó aisladamente. La copia de ensayo se conserva.
-- El usuario guardó el Proxy Host de `drive.quetzaltech.shop` hacia `http://quetzaltech-drive:80` en NPM; el panel lo mostraba Online con Let's Encrypt. Se valida respuesta HTTPS por separado antes de marcar publicación terminada. Solo se añadió este host de Drive.
-- A petición del usuario, el mínimo de contraseña de cuenta personal se cambió de 12 a 8 caracteres; la clave elegida es numérica. `server/src/auth/password.ts`, `server/src/auth/setup.ts`, `server/test/access-products.test.ts`, `SPEC.md` y `docs/API.md` reflejan el nuevo mínimo. Advertencia: es fácil de adivinar.
-
-## Después de cerrar HTTPS — GitHub
-- El usuario pidió conectar el checkout local y la copia de producción con `https://github.com/quetzitaxd/Quetzaltech-drive.git` después de completar el despliegue.
-- Estado previo: `origin` local ya apunta a esa URL, rama `main`, sin commits; los 135 archivos del proyecto están aún sin seguimiento estándar. Antes del primer push verificar exclusiones de `.env`, `data/`, APKs y firmas; luego publicar el commit y dejar `/srv/quetzaltech-drive` en ese mismo commit sin incluir configuración ni datos locales.
-- Aún no se ha hecho push, commit ni cambio de Git en producción.
+- NPM sirve `drive.quetzaltech.shop` hacia `http://quetzaltech-drive:80`; validación pública: HTTPS 200 con TLS verificado, health 200, `/api/products` 401 sin sesión y `/data/drive.sqlite` 404. Solo se añadió el host de Drive; el contenedor no publica puertos al host.
+- Cuenta personal configurada en la VPS con el valor elegido por el usuario. A petición suya, el mínimo de contraseña cambió de 12 a 8 caracteres; `server/src/auth/password.ts`, `server/src/auth/setup.ts`, `server/test/access-products.test.ts`, `SPEC.md` y `docs/API.md` reflejan el nuevo mínimo. Es una clave numérica fácil de adivinar.
+- El repositorio local y `/srv/quetzaltech-drive` usan `origin` GitHub, rama `main`; `.env` y `data/` permanecen en producción, ignorados y fuera de Git. El código de producción quedó sincronizado al commit publicado.
 
 ## Próximo paso
-Validar HTTPS, desplegar el cambio de mínimo y configurar la cuenta; luego sincronizar local y producción con GitHub como se solicitó. Android sigue pendiente de aceptación en dispositivo y keystore release persistente antes de declarar la etapa 07 completada.
+Etapa 07: probar los flujos con un dispositivo Android y configurar una firma release persistente. No declarar Android terminado hasta completar ambos.
 
 ## Etapa 07 — implementación en curso; criterios aún no cerrados
 - Plataforma Capacitor 8.5.2 fijada y generada en `android/`; JDK integrado de Android Studio, SDK API 36 y Gradle 8.14.3. Sin `server.url`; la compilación Android recibe `VITE_API_BASE_URL=https://drive.quetzaltech.shop` y el servidor debe permitir el origen exacto `https://localhost` en `ANDROID_ORIGINS`.
