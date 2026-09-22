@@ -1,0 +1,29 @@
+name: quetzaltech-drive
+services:
+  app:
+    build: .
+    container_name: quetzaltech-drive
+    restart: unless-stopped
+    init: true
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 80
+      DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+    expose:
+      - "80"
+    networks: [proxy]
+    mem_limit: 1g
+    cpus: 1.0
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,1 @@
+Lee AGENTS.md, SPEC.md y STATUS.md. Continúa únicamente la primera etapa incompleta de prompts/INDEX.md. Usa la evidencia registrada para evitar repetir trabajo; verifica el estado del código cuando sea necesario. Si la etapa anterior no cumple sus criterios, resuélvela primero. No cambies stack/alcance y no avances a otra etapa en este turno. Actualiza STATUS.md al cerrar.

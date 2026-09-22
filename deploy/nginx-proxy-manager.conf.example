@@ -1,0 +1,9 @@
+# Aplicar SOLO al Proxy Host del proyecto, después de completar etapa 08.
+# Host: drive.quetzaltech.shop (propuesto); Forward: http://quetzaltech-drive:80
+# SSL y Force SSL en Nginx Proxy Manager. No publicar puertos del contenedor.
+# Margen multipart sobre MAX_FILE_BYTES=512 MiB; revisar el valor definitivo.
+client_max_body_size 520m;
+proxy_read_timeout 900s;
+proxy_send_timeout 900s;
+proxy_request_buffering off;
+# No activar caché pública de medios protegidos.
