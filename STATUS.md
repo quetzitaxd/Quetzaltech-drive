@@ -96,5 +96,11 @@ Etapa 07: probar los flujos con un dispositivo Android y configurar una firma re
 - Limitaciones del entorno resueltas: instalación inicial sin red y tsx con error uv_os_get_passwd dentro del aislamiento; instalación y verify aprobados al ejecutar fuera del aislamiento. Docker/VPS/TLS, revisión visual y Android no probados.
 - MANIFEST.sha256 corresponde al ZIP original; no es un manifiesto actualizado de estos cambios.
 
+## Ajuste solicitado de interfaz web (continuación de etapa 05)
+- Estado: implementado; la etapa 05 ya estaba cerrada. El catálogo muestra hasta cuatro fotos por tarjeta; dentro del producto, seleccionar una foto/video abre vista previa fija a la derecha y permite abrir el visor completo.
+- Selector persistente de vistas Iconos, Lista y Detalles. Sin datos de muestra; se usan endpoints privados y tickets reales.
+- Archivos: `web/src/App.tsx`, `web/src/styles.css`, `SPEC.md`.
+- Verificación: `npm run verify` aprobado (typecheck, 23 pruebas, builds, HTTP compilado y restore aislado). Una ejecución previa falló por permisos de Vite y otra tuvo fallo de login intermitente; la ejecución final aprobó todo.
+- Pendiente: validación visual manual en navegador/dispositivo. Próximo paso general: etapa 07 Android, según prompts/INDEX.md.
 ## Formato de actualización
 Por etapa: estado; archivos relevantes; comandos y resultado; pruebas manuales con entorno; pendientes/bloqueos; siguiente prompt. Mantén resumen breve, no diario de cada comando.
