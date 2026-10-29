@@ -33,6 +33,13 @@ Ver docs/VERIFICATION.md.
 ## Próximo paso
 Etapa 07: probar los flujos con un dispositivo Android y configurar una firma release persistente. No declarar Android terminado hasta completar ambos.
 
+## Corrección de selección por lote — 2026-10-29 (etapa 07)
+- Implementado en `web/src/App.tsx`: «Agregar archivos» del producto vacío ahora usa el mismo flujo que «Seleccionar archivos», incluido el selector nativo múltiple. Antes abría un input de WebView que omitía el puente SAF. Añadida ayuda de selección múltiple; API y contrato sin cambios.
+- `scripts/upload-picker.test.mjs` y `docs/ANDROID.md`: regresión en Edge/Playwright con SQLite temporal; ambos botones abren el selector web múltiple, dos lotes guardan cuatro fotos reales y ambos botones entregan lotes de tres elementos al flujo Android con puente sustituido. Prueba aprobada; no equivale a aceptación del SAF en hardware.
+- `npm run verify` aprobado: typecheck, 23 pruebas, builds, HTTP compilado y restore aislado. Primer intento aislado falló por permisos de almacenamiento/loopback; ejecución autorizada fuera del aislamiento aprobada. Build web habitual restaurado después del build HTTPS de pruebas.
+- `VITE_API_BASE_URL=https://drive.quetzaltech.shop npm run android:sync` y `android/gradlew.bat -p android assembleDebug` aprobados con JDK Android Studio y SDK `C:/Android`. APK debug actualizado en `quetzaltech-drive.apk`, excluido de Git; SHA-256 `4FEBC4F9D734334FEAEA49ACBAA54B23295F410402EA26B115232DE9ABE3D1C3`.
+- Pendiente: instalar/probar la APK en teléfono; `adb devices` no mostró dispositivos. No hay firma release configurada ni despliegue web realizado. Próximo prompt: `prompts/07-android.md`, aceptación real y firma persistente; etapa 07 sigue abierta.
+
 ## Etapa 07 — implementación en curso; criterios aún no cerrados
 - Plataforma Capacitor 8.5.2 fijada y generada en `android/`; JDK integrado de Android Studio, SDK API 36 y Gradle 8.14.3. Sin `server.url`; la compilación Android recibe `VITE_API_BASE_URL=https://drive.quetzaltech.shop` y el servidor debe permitir el origen exacto `https://localhost` en `ANDROID_ORIGINS`.
 - `NativeDrivePlugin.kt` usa Android SAF para varias URIs `content://`, permisos persistentes cuando el proveedor los permite, SHA-256 y multipart streaming nativos con progreso/cancelación; el token queda cifrado con AES-GCM y clave Android Keystore. Añadidos desvincular con revocación remota, keepScreenOn solo durante transferencias, DownloadManager y FileProvider para compartir. La app conserva la cola y la misma clave lógica tras interrupción; permite volver a seleccionar la URI.
@@ -104,3 +111,5 @@ Etapa 07: probar los flujos con un dispositivo Android y configurar una firma re
 - Pendiente: validación visual manual en navegador/dispositivo. Próximo paso general: etapa 07 Android, según prompts/INDEX.md.
 ## Formato de actualización
 Por etapa: estado; archivos relevantes; comandos y resultado; pruebas manuales con entorno; pendientes/bloqueos; siguiente prompt. Mantén resumen breve, no diario de cada comando.
+
+- APK de pruebas recompilado y copiado otra vez en la raíz a petición del usuario: `npm run android:sync` con API HTTPS de producción y `assembleDebug` aprobados; tamaño 4,291,826 bytes. Pendiente probarlo en teléfono.

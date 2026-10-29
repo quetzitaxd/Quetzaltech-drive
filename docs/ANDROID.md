@@ -24,3 +24,9 @@ Para `assembleRelease`, configura un keystore persistente, respaldado y externo 
 La cola de subidas conserva metadatos, URI persistidas cuando el proveedor las autoriza y la misma clave de reintento. Si Android perdió el permiso URI, selecciona otra vez el archivo; no se declara un upload completado sin confirmación del servidor. Las descargas usan DownloadManager con progreso/notificación del sistema; compartir obtiene un ticket temporal y entrega un `content://` con FileProvider. Desvincular revoca el token del dispositivo.
 
 La aceptación de pairing, reapertura, subida mixta, caída de red, pantalla activa, visor y descargas requiere ejecutar en un emulador o dispositivo Android conectado. Registrar el modelo/API y el SHA-256 de la APK en `STATUS.md`; la generación del proyecto por sí sola no cuenta como prueba de dispositivo.
+
+## Selección por lote
+
+Tanto «Seleccionar archivos» como «Agregar archivos» abren el selector SAF múltiple en Android. Si el proveedor lo requiere, mantén pulsada la primera foto y marca las demás antes de confirmar. En web ambos botones usan el mismo input múltiple; cada archivo entra en la cola existente de dos transferencias simultáneas.
+
+Regresión opcional en Edge con Playwright disponible en el host, después del build del servidor: define `PLAYWRIGHT_MODULE` con la ruta del módulo Playwright, compila la web con `VITE_API_BASE_URL=https://picker.test` y ejecuta `node --test scripts/upload-picker.test.mjs`. La prueba intercepta las solicitudes API hacia un servidor local con SQLite temporal; comprueba los dos botones, cuatro subidas web reales y los lotes del puente Android sustituido. No valida el SAF del dispositivo. Restaura después el build web habitual sin la URL de pruebas; no sincronices ese build de pruebas con Android.
